@@ -6,6 +6,7 @@ import com.apiproject.ServiceBookingSystem.dto.UserDto;
 import com.apiproject.ServiceBookingSystem.entity.User;
 import com.apiproject.ServiceBookingSystem.repository.UserRepository;
 import com.apiproject.ServiceBookingSystem.services.authentication.AuthService;
+import com.apiproject.ServiceBookingSystem.services.jwt.UserDetailsServiceImpl;
 import com.apiproject.ServiceBookingSystem.util.JwtUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,14 +39,16 @@ public class AuthenticationController {
     @Autowired
     private UserRepository userRepository;
 
-    public static final String TOKEN_PREFIX="Bearer ";
+    public static final String TOKEN_PREFIX = "Bearer ";
 
-    public static final String HEADER_STRING="Authorization";
+    public static final String HEADER_STRING = "Authorization";
+    @Autowired
+    private UserDetailsServiceImpl userDetailsServiceImpl;
 
 
     @PostMapping("/client/sign-up")
     public ResponseEntity<?> signupClient(@RequestBody SignupRequestDTO signupRequestDTO) {
-        if(authService.presentByEmail(signupRequestDTO.getEmail())) {
+        if (authService.presentByEmail(signupRequestDTO.getEmail())) {
             return new ResponseEntity<>("Client already exists with this Email!", HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -56,7 +59,7 @@ public class AuthenticationController {
 
     @PostMapping("/company/sign-up")
     public ResponseEntity<?> signupCompany(@RequestBody SignupRequestDTO signupRequestDTO) {
-        if(authService.presentByEmail(signupRequestDTO.getEmail())) {
+        if (authService.presentByEmail(signupRequestDTO.getEmail())) {
             return new ResponseEntity<>("Client already exists with this Email!", HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -67,30 +70,30 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public void createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest,
-                                          HttpServletResponse response) throws IOException , JSONException {
+                                          HttpServletResponse response) throws IOException, JSONException {
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getUsername(), authenticationRequest.getPassword()
             ));
-        }catch (BadCredentialsException e){
-            throw new BadCredentialsException("Incorrect username or password",e);
-    }
-        final UserDetails userDetails=userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Incorrect username or password", e);
+        }
+        final UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(authenticationRequest.getUsername());
 
-        final String jwt =jwtUtil.generateToken(userDetails.getUsername());
-        User user= userRepository.findFirstByEmail(authenticationRequest.getUsername());
+        final String jwt = jwtUtil.generateToken(userDetails.getUsername());
+        User user = userRepository.findFirstByEmail(authenticationRequest.getUsername());
 
         response.getWriter().write(new JSONObject()
-                .put("userId",user.getId())
-                .put("role",user.getRole())
+                .put("userId", user.getId())
+                .put("role", user.getRole())
                 .toString()
         );
 
-        response.addHeader("Access-Control-Expose-Headers","Authorization");
-        response.addHeader("Access-Control-Allow-Headers","Authorization,"+
+        response.addHeader("Access-Control-Expose-Headers", "Authorization");
+        response.addHeader("Access-Control-Allow-Headers", "Authorization," +
                 "X-PINGOTHER, Origin, X-Requested-With,Content-Type,Accept,X-Custom-heade");
-        response.addHeader(HEADER_STRING,TOKEN_PREFIX);
+        response.addHeader(HEADER_STRING, TOKEN_PREFIX);
     }
 
 }
