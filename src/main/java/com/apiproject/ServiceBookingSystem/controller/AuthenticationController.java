@@ -17,14 +17,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class AuthenticationController {
 
     @Autowired
@@ -32,6 +33,9 @@ public class AuthenticationController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -42,13 +46,10 @@ public class AuthenticationController {
     public static final String TOKEN_PREFIX = "Bearer ";
 
     public static final String HEADER_STRING = "Authorization";
-    @Autowired
-    private UserDetailsServiceImpl userDetailsServiceImpl;
-
 
     @PostMapping("/client/sign-up")
     public ResponseEntity<?> signupClient(@RequestBody SignupRequestDTO signupRequestDTO) {
-        if (authService.presentByEmail(signupRequestDTO.getEmail())) {
+        if(authService.presentByEmail(signupRequestDTO.getEmail())) {
             return new ResponseEntity<>("Client already exists with this Email!", HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -59,7 +60,7 @@ public class AuthenticationController {
 
     @PostMapping("/company/sign-up")
     public ResponseEntity<?> signupCompany(@RequestBody SignupRequestDTO signupRequestDTO) {
-        if (authService.presentByEmail(signupRequestDTO.getEmail())) {
+        if(authService.presentByEmail(signupRequestDTO.getEmail())) {
             return new ResponseEntity<>("Client already exists with this Email!", HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -69,17 +70,14 @@ public class AuthenticationController {
     }
 
     @PostMapping("/authenticate")
-    public void createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest,
-                                          HttpServletResponse response) throws IOException, JSONException {
-
+    public void createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) throws IOException, JSONException {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    authenticationRequest.getUsername(), authenticationRequest.getPassword()
-            ));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Incorrect username or password", e);
+            throw new BadCredentialsException("Invalid username or password", e);
         }
-        final UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(authenticationRequest.getUsername());
+
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 
         final String jwt = jwtUtil.generateToken(userDetails.getUsername());
         User user = userRepository.findFirstByEmail(authenticationRequest.getUsername());
@@ -92,8 +90,12 @@ public class AuthenticationController {
 
         response.addHeader("Access-Control-Expose-Headers", "Authorization");
         response.addHeader("Access-Control-Allow-Headers", "Authorization," +
-                "X-PINGOTHER, Origin, X-Requested-With,Content-Type,Accept,X-Custom-heade");
-        response.addHeader(HEADER_STRING, TOKEN_PREFIX);
+                " X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept, X-Custom-Header");
+
+        response.addHeader(HEADER_STRING, TOKEN_PREFIX + jwt);
+
     }
+
+
 
 }
