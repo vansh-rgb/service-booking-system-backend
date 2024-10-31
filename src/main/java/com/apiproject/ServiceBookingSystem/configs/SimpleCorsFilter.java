@@ -1,5 +1,7 @@
 package com.apiproject.ServiceBookingSystem.configs;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -8,43 +10,24 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class SimpleCorsFilter implements Filter {
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        String originHeader = request.getHeader("origin");
+        response.setHeader("Access-Control-Allow-Origin", originHeader);
+        response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
+        response.setHeader("Access-Control-Max-Age", "3600");
+        response.setHeader("Access-Control-Allow-Headers", "*");
 
-        HttpServletResponse res = (HttpServletResponse) response;
-        HttpServletRequest req = (HttpServletRequest) request;
-
-        // Allowing localhost:4200 to communicate with backend
-        String originHeader = req.getHeader("Origin");
-
-        if (originHeader != null && originHeader.equals("http://localhost:4200")) {
-            res.setHeader("Access-Control-Allow-Origin", originHeader);  // Change to "*" to allow all origins
+        if("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            filterChain.doFilter(servletRequest, servletResponse);
         }
 
-        res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, X-Requested-With, Accept, Origin");
-        res.setHeader("Access-Control-Allow-Credentials", "true");
-        res.setHeader("Access-Control-Max-Age", "3600");
-
-        // Intercept OPTIONS requests and return OK with appropriate headers
-        if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
-            res.setStatus(HttpServletResponse.SC_OK);
-            return;
-        }
-
-        chain.doFilter(request, response);
-    }
-
-    @Override
-    public void init(FilterConfig filterConfig) {
-        // Optional initialization code
-    }
-
-    @Override
-    public void destroy() {
-        // Optional destruction code
     }
 }
