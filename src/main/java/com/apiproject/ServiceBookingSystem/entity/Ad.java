@@ -32,7 +32,7 @@ public class Ad {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    private AdDTO getAdDTO() {
+    public AdDTO getAdDTO() {
         AdDTO adDTO = new AdDTO();
 
         adDTO.setId(id);
