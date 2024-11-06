@@ -8,6 +8,7 @@ import com.apiproject.ServiceBookingSystem.dto.AdDTO;
 import java.util.List;
 
 @Repository
-public interface AdRepository extends JpaRepository<Ad, Long> { List<Ad> findAllByUserId(long userId);
+public interface AdRepository extends JpaRepository<Ad, Long> {
+    List<Ad> findAllByUserId(long userId);
 
 }
