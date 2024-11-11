@@ -6,9 +6,10 @@ import org.springframework.stereotype.Repository;
 import com.apiproject.ServiceBookingSystem.dto.AdDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AdRepository extends JpaRepository<Ad, Long> {
     List<Ad> findAllByUserId(long userId);
-
+    List<Ad> findAllByServiceNameContaining(String name);
 }

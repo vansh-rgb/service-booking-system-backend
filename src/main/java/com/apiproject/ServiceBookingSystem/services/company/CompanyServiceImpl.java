@@ -75,4 +75,13 @@ public class CompanyServiceImpl implements CompanyService{
         }
         return false;
     }
+
+    public boolean deleteAd(long AdId){
+        Optional<Ad> optionalAd=adRepository.findById(AdId);
+        if(optionalAd.isPresent()){
+            adRepository.delete(optionalAd.get());
+            return true;
+        }
+        return false;
+    }
 }
