@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.PathParam;
+
 @RestController
 @RequestMapping("/api/client")
 public class ClientController {
@@ -40,5 +42,11 @@ public class ClientController {
     @GetMapping("/ad/{adId}")
     public ResponseEntity<?> getAdDetailsByAdId(@PathVariable Long adId){
         return ResponseEntity.ok(clientService.getAdDetailsByAdId(adId));
+    }
+
+    @GetMapping("/my-bookings/{userId}")
+    public ResponseEntity<?> getAllBookingsByUserId(@PathVariable long userId)
+    {
+        return ResponseEntity.ok(clientService.getAllBookingsUserId(userId));
     }
 }
