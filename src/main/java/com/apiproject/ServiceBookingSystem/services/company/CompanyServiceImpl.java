@@ -1,15 +1,21 @@
 package com.apiproject.ServiceBookingSystem.services.company;
 
 import com.apiproject.ServiceBookingSystem.dto.AdDTO;
+import com.apiproject.ServiceBookingSystem.dto.AdDetailsForClientDTO;
+import com.apiproject.ServiceBookingSystem.dto.ReservationDTO;
 import com.apiproject.ServiceBookingSystem.entity.Ad;
+import com.apiproject.ServiceBookingSystem.entity.Reservation;
 import com.apiproject.ServiceBookingSystem.entity.User;
+import com.apiproject.ServiceBookingSystem.enums.ReservationStatus;
 import com.apiproject.ServiceBookingSystem.repository.AdRepository;
+import com.apiproject.ServiceBookingSystem.repository.ReservationRepository;
 import com.apiproject.ServiceBookingSystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -21,6 +27,8 @@ public class CompanyServiceImpl implements CompanyService{
 
     @Autowired
     private AdRepository adRepository;
+    @Autowired
+    private ReservationRepository reservationRepository;
 
 
     public boolean postAd(Long userId, AdDTO adDTO) throws IOException {
@@ -84,4 +92,34 @@ public class CompanyServiceImpl implements CompanyService{
         }
         return false;
     }
+
+    public List<ReservationDTO> getAllAdBookings(long companyId)
+    {
+        return reservationRepository.findAllByCompanyId(companyId).stream().map(Reservation::getReservationDto).collect(Collectors.toList());
+    }
+
+    public boolean changeBookingStatus(long bookingId,String status)
+    {
+        Optional<Reservation> optionalReservation = reservationRepository.findById(bookingId);
+        if(optionalReservation.isPresent())
+        {
+            Reservation existingReservation = optionalReservation.get();
+            if(Objects.equals(status,"Approve"))
+            {
+                existingReservation.setReservationStatus(ReservationStatus.APPROVED);
+            }
+            else {
+                existingReservation.setReservationStatus(ReservationStatus.REJECTED);
+            }
+            reservationRepository.save(existingReservation);
+            return true;
+        }
+        return false;
+    }
+
+
+
+
+
+
 }
