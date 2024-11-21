@@ -1,16 +1,19 @@
 package com.apiproject.ServiceBookingSystem.controller;
 
+import com.apiproject.ServiceBookingSystem.dto.AdDTO;
 import com.apiproject.ServiceBookingSystem.dto.ReservationDTO;
 import com.apiproject.ServiceBookingSystem.dto.ReviewDTO;
 import com.apiproject.ServiceBookingSystem.services.client.ClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.PathParam;
+import org.springframework.data.domain.Pageable;
 
 @Slf4j
 @RestController
@@ -21,13 +24,16 @@ public class ClientController {
     private ClientService clientService;
 
     @GetMapping("/ads")
-    public ResponseEntity<?> getAllAds(){
-        return ResponseEntity.ok(clientService.getAllAds());
+    public ResponseEntity<Page<AdDTO>> getAllAds(@PageableDefault(size = 2) Pageable pageable){
+        return ResponseEntity.ok(clientService.getAllAds(pageable));
     }
 
     @GetMapping("/search/{name}")
-    public ResponseEntity<?> searchAdByService(@PathVariable String name){
-        return ResponseEntity.ok(clientService.searchAdByName(name));
+    public ResponseEntity<Page<AdDTO>> searchAdByService(
+            @PathVariable String name,
+            @PageableDefault(size = 10, sort = "id") Pageable pageable
+    ){
+        return ResponseEntity.ok(clientService.searchAdByName(name, pageable));
     }
 
     @PostMapping("/book-service")

@@ -44,15 +44,6 @@ public class CompanyController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-//    @PutMapping("/update/{addId}")
-//    public ResponseEntity<String> updateAd(@PathVariable Long addId, @RequestBody Map<String, String> payload) {
-//        String name = payload.get("name");
-//        // Log or print the name to verify it's being received
-//        System.out.println("Received name: " + name + " for addId: " + addId);
-//
-//        // Just a simple response to indicate success
-//        return ResponseEntity.status(HttpStatus.OK).body("Ad updated successfully for ID: " + addId);
-//    }
 
     @PutMapping("/update/{addId}")
     public ResponseEntity<?> updateAd(@PathVariable Long addId,  @ModelAttribute AdDTO adDTO) throws IOException {

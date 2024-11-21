@@ -5,11 +5,13 @@ import com.apiproject.ServiceBookingSystem.dto.AdDetailsForClientDTO;
 import com.apiproject.ServiceBookingSystem.dto.ReservationDTO;
 import com.apiproject.ServiceBookingSystem.dto.ReviewDTO;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ClientService {
-    List<AdDTO> getAllAds();
-    List<AdDTO> searchAdByName(String name);
+    Page<AdDTO> getAllAds(Pageable pageable);
+    Page<AdDTO> searchAdByName(String name, Pageable pageable);
 
     boolean bookService(ReservationDTO reservationDTO);
 
