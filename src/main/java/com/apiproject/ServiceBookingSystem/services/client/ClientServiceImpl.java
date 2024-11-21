@@ -16,6 +16,8 @@ import com.apiproject.ServiceBookingSystem.repository.ReviewRepository;
 import com.apiproject.ServiceBookingSystem.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -38,13 +40,16 @@ public class ClientServiceImpl implements ClientService {
     @Autowired
     private ReviewRepository reviewRepository;
 
-    public List<AdDTO> getAllAds() {
+    public Page<AdDTO> getAllAds(Pageable pageable) {
         log.error("Entered get all ads");
-        return adRepository.findAll().stream().map(Ad::getAdDTO).collect(Collectors.toList());
+        Page<Ad> adPage = adRepository.findAll(pageable);
+
+        return adPage.map(Ad::getAdDTO);
     }
 
-    public List<AdDTO> searchAdByName(String name) {
-        return adRepository.findAllByServiceNameContaining(name).stream().map(Ad::getAdDTO).collect(Collectors.toList());
+    public Page<AdDTO> searchAdByName(String name, Pageable pageable) {
+        Page<Ad> adPage = adRepository.findAllByServiceNameContaining(name, pageable);
+        return adPage.map(Ad::getAdDTO);
     }
 
     public boolean bookService(ReservationDTO reservationDTO) {
