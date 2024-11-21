@@ -24,7 +24,7 @@ public class ClientController {
     private ClientService clientService;
 
     @GetMapping("/ads")
-    public ResponseEntity<Page<AdDTO>> getAllAds(@PageableDefault(size = 2) Pageable pageable){
+    public ResponseEntity<Page<AdDTO>> getAllAds(@PageableDefault(size = 10) Pageable pageable){
         return ResponseEntity.ok(clientService.getAllAds(pageable));
     }
 
