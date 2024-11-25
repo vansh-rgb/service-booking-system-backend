@@ -7,6 +7,7 @@ import com.apiproject.ServiceBookingSystem.services.client.ClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -24,14 +25,14 @@ public class ClientController {
     private ClientService clientService;
 
     @GetMapping("/ads")
-    public ResponseEntity<Page<AdDTO>> getAllAds(@PageableDefault(size = 10) Pageable pageable){
+    public ResponseEntity<Page<AdDTO>> getAllAds(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         return ResponseEntity.ok(clientService.getAllAds(pageable));
     }
 
     @GetMapping("/search/{name}")
     public ResponseEntity<Page<AdDTO>> searchAdByService(
             @PathVariable String name,
-            @PageableDefault(size = 10, sort = "id") Pageable pageable
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ){
         return ResponseEntity.ok(clientService.searchAdByName(name, pageable));
     }
