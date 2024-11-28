@@ -1,7 +1,11 @@
 package com.apiproject.ServiceBookingSystem.controller;
 import com.apiproject.ServiceBookingSystem.dto.AdDTO;
 import com.apiproject.ServiceBookingSystem.dto.ReservationDTO;
+import com.apiproject.ServiceBookingSystem.enums.ApiErrorCode;
 import com.apiproject.ServiceBookingSystem.services.company.CompanyService;
+import com.apiproject.ServiceBookingSystem.util.ResponseUtil;
+import jakarta.servlet.http.HttpServletResponse;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +26,11 @@ public class CompanyController {
         boolean success = companyService.postAd(userId, adDTO);
         if (success) {
             return ResponseEntity.status(HttpStatus.OK).build();
+
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_POST_FAILED.getCode(),
+                    ApiErrorCode.AD_POST_FAILED.getMessage(), HttpStatus.CONFLICT);
+
         }
     }
     @GetMapping("/ads/{userId}")
@@ -41,7 +48,9 @@ public class CompanyController {
             return ResponseEntity.ok(adDTO);
         }
         else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_NOT_FOUND.getCode(),
+                    ApiErrorCode.AD_NOT_FOUND.getMessage(), HttpStatus.CONFLICT);
+
         }
     }
 
@@ -51,8 +60,8 @@ public class CompanyController {
         if (success) {
             return ResponseEntity.status(HttpStatus.OK).build();
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+            return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_UPDATE_FAILED.getCode(),
+                    ApiErrorCode.AD_UPDATE_FAILED.getMessage(), HttpStatus.CONFLICT);        }
     }
     @DeleteMapping("/ad/{adId}")
     public ResponseEntity<?> deletedAd(@PathVariable Long adId){
@@ -61,8 +70,8 @@ public class CompanyController {
             return ResponseEntity.status(HttpStatus.OK).build();
         }
         else{
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+            return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_DELETE_FAILED.getCode(),
+                    ApiErrorCode.AD_DELETE_FAILED.getMessage(), HttpStatus.CONFLICT);        }
     }
 
     @GetMapping("/bookings/{companyId}")
@@ -78,5 +87,4 @@ public class CompanyController {
         if(success) return ResponseEntity.ok().build();
         return  ResponseEntity.notFound().build();
     }
-
 }
