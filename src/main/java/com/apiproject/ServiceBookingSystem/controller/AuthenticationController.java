@@ -95,7 +95,4 @@ public class AuthenticationController {
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + jwt);
 
     }
-
-
-
 }
