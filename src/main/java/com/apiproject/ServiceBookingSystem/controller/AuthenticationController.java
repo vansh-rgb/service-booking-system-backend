@@ -4,10 +4,13 @@ import com.apiproject.ServiceBookingSystem.dto.AuthenticationRequest;
 import com.apiproject.ServiceBookingSystem.dto.SignupRequestDTO;
 import com.apiproject.ServiceBookingSystem.dto.UserDto;
 import com.apiproject.ServiceBookingSystem.entity.User;
+import com.apiproject.ServiceBookingSystem.enums.ApiErrorCode;
 import com.apiproject.ServiceBookingSystem.repository.UserRepository;
 import com.apiproject.ServiceBookingSystem.services.authentication.AuthService;
 import com.apiproject.ServiceBookingSystem.services.jwt.UserDetailsServiceImpl;
 import com.apiproject.ServiceBookingSystem.util.JwtUtil;
+import com.apiproject.ServiceBookingSystem.util.ResponseUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+@Slf4j
 @RestController
 @CrossOrigin(origins = "*")
 public class AuthenticationController {
@@ -50,23 +53,25 @@ public class AuthenticationController {
     @PostMapping("/client/sign-up")
     public ResponseEntity<?> signupClient(@RequestBody SignupRequestDTO signupRequestDTO) {
         if(authService.presentByEmail(signupRequestDTO.getEmail())) {
-            return new ResponseEntity<>("Client already exists with this Email!", HttpStatus.NOT_ACCEPTABLE);
+            return ResponseUtil.buildErrorResponse(ApiErrorCode.CLIENT_EXISTS.getCode(),
+                    ApiErrorCode.CLIENT_EXISTS.getMessage(), HttpStatus.CONFLICT);
         }
 
         UserDto createdUser = authService.signupClient(signupRequestDTO);
-
-        return new ResponseEntity<>(createdUser, HttpStatus.OK);
+        return ResponseUtil.buildErrorResponse(ApiErrorCode.SUCCESSFUL_CLIENT_SIGNUP.getCode(),
+                ApiErrorCode.CLIENT_EXISTS.getMessage(), HttpStatus.CONFLICT);
     }
 
     @PostMapping("/company/sign-up")
     public ResponseEntity<?> signupCompany(@RequestBody SignupRequestDTO signupRequestDTO) {
         if(authService.presentByEmail(signupRequestDTO.getEmail())) {
-            return new ResponseEntity<>("Client already exists with this Email!", HttpStatus.NOT_ACCEPTABLE);
-        }
+            return ResponseUtil.buildErrorResponse(ApiErrorCode.COMPANY_EXISTS.getCode(),
+                    ApiErrorCode.COMPANY_EXISTS.getMessage(), HttpStatus.CONFLICT);        }
 
         UserDto createdUser = authService.signupCompany(signupRequestDTO);
 
-        return new ResponseEntity<>(createdUser, HttpStatus.OK);
+        return ResponseUtil.buildResponse(ApiErrorCode.SUCCESSFUL_COMPANY_SIGNUP.getCode(),
+                ApiErrorCode.SUCCESSFUL_COMPANY_SIGNUP.getMessage(), createdUser);
     }
 
     @PostMapping("/authenticate")
@@ -74,9 +79,18 @@ public class AuthenticationController {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Invalid username or password", e);
-        }
+            log.error("###################################");
+            failure(authenticationRequest,response);
+//            throw new BadCredentialsException("Invalid username or password", e);
 
+        }
+        success(authenticationRequest,response);
+//
+
+
+    }
+
+    private void success(AuthenticationRequest authenticationRequest, HttpServletResponse response) throws IOException, JSONException {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 
         final String jwt = jwtUtil.generateToken(userDetails.getUsername());
@@ -85,14 +99,31 @@ public class AuthenticationController {
         response.getWriter().write(new JSONObject()
                 .put("userId", user.getId())
                 .put("role", user.getRole())
+                .put("code", ApiErrorCode.SUCCESSFUL_LOGIN.getCode())
+                .put("message", ApiErrorCode.SUCCESSFUL_LOGIN.getMessage())
                 .toString()
         );
+
 
         response.addHeader("Access-Control-Expose-Headers", "Authorization");
         response.addHeader("Access-Control-Allow-Headers", "Authorization," +
                 " X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept, X-Custom-Header");
 
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + jwt);
+    }
+
+    public void failure(AuthenticationRequest authenticationRequest, HttpServletResponse response) throws JSONException, IOException {
+
+        response.getWriter().write(new JSONObject()
+                .put("code", ApiErrorCode.INVALID_CREDENTIALS.getCode())
+                .put("message", ApiErrorCode.INVALID_CREDENTIALS.getMessage())
+                .toString()
+        );
+
+
+        response.addHeader("Access-Control-Expose-Headers", "Authorization");
+        response.addHeader("Access-Control-Allow-Headers", "Authorization," +
+                " X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept, X-Custom-Header");
 
     }
 
