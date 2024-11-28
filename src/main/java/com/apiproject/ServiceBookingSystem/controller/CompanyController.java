@@ -29,7 +29,7 @@ public class CompanyController {
 
         } else {
             return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_POST_FAILED.getCode(),
-                    ApiErrorCode.AD_POST_FAILED.getMessage(), HttpStatus.CONFLICT);
+                    ApiErrorCode.AD_POST_FAILED.getMessage(), HttpStatus.BAD_REQUEST);
 
         }
     }
@@ -49,7 +49,7 @@ public class CompanyController {
         }
         else {
             return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_NOT_FOUND.getCode(),
-                    ApiErrorCode.AD_NOT_FOUND.getMessage(), HttpStatus.CONFLICT);
+                    ApiErrorCode.AD_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND);
 
         }
     }
@@ -61,8 +61,9 @@ public class CompanyController {
             return ResponseEntity.status(HttpStatus.OK).build();
         } else {
             return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_UPDATE_FAILED.getCode(),
-                    ApiErrorCode.AD_UPDATE_FAILED.getMessage(), HttpStatus.CONFLICT);        }
+                    ApiErrorCode.AD_UPDATE_FAILED.getMessage(), HttpStatus.NOT_FOUND);        }
     }
+
     @DeleteMapping("/ad/{adId}")
     public ResponseEntity<?> deletedAd(@PathVariable Long adId){
         boolean success=companyService.deleteAd(adId);
@@ -71,7 +72,7 @@ public class CompanyController {
         }
         else{
             return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_DELETE_FAILED.getCode(),
-                    ApiErrorCode.AD_DELETE_FAILED.getMessage(), HttpStatus.CONFLICT);        }
+                    ApiErrorCode.AD_DELETE_FAILED.getMessage(), HttpStatus.NOT_FOUND);        }
     }
 
     @GetMapping("/bookings/{companyId}")
