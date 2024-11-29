@@ -65,7 +65,7 @@ public class CompanyController {
                     ApiErrorCode.AD_UPDATE_FAILED.getMessage(), HttpStatus.NOT_FOUND);        }
     }
 
-    @DeleteMapping("/ad/{adId}")
+    @DeleteMapping("/delete/{adId}")
     public ResponseEntity<?> deletedAd(@PathVariable Long adId){
         boolean success=companyService.deleteAd(adId);
         if(success){
