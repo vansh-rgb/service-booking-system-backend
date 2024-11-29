@@ -1,7 +1,6 @@
 package com.apiproject.ServiceBookingSystem.services.company;
 
 import com.apiproject.ServiceBookingSystem.dto.AdDTO;
-import com.apiproject.ServiceBookingSystem.dto.AdDetailsForClientDTO;
 import com.apiproject.ServiceBookingSystem.dto.ReservationDTO;
 import com.apiproject.ServiceBookingSystem.entity.Ad;
 import com.apiproject.ServiceBookingSystem.entity.Reservation;
@@ -31,9 +30,14 @@ public class CompanyServiceImpl implements CompanyService{
     private ReservationRepository reservationRepository;
 
 
-    public boolean postAd(Long userId, AdDTO adDTO) throws IOException {
+    public Ad postAd(Long userId, AdDTO adDTO) throws IOException {
+
         Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent())
+        if (optionalUser.isPresent() &&
+                adDTO.getImg() != null && !adDTO.getImg().isEmpty() &&
+                adDTO.getPrice() != null && adDTO.getPrice() > 0 &&
+                adDTO.getDescription() != null && !adDTO.getDescription().trim().isEmpty())
+
         {
             Ad ad = new Ad();
             ad.setServiceName(adDTO.getServiceName());
@@ -42,10 +46,9 @@ public class CompanyServiceImpl implements CompanyService{
             ad.setPrice(adDTO.getPrice());
             ad.setUser(optionalUser.get());
 
-            adRepository.save(ad);
-            return true;
+            return adRepository.save(ad);
         }
-        return false;
+        throw new IllegalArgumentException("Invalid ad data or user not found.");
     }
 
     public List<AdDTO> getAllAds(long userId) {
@@ -66,8 +69,10 @@ public class CompanyServiceImpl implements CompanyService{
     }
 
     public boolean updateAd(long adId, AdDTO adDTO) throws IOException {
-        Optional<Ad> optionalAd =adRepository.findById(adId);
-        if(optionalAd.isPresent())
+        Optional<Ad> optionalAd = adRepository.findById(adId);
+        if(optionalAd.isPresent()
+        && adDTO.getImg() != null && !adDTO.getImg().isEmpty()
+        )
         {
             Ad ad =optionalAd.get();
             ad.setServiceName(adDTO.getServiceName());

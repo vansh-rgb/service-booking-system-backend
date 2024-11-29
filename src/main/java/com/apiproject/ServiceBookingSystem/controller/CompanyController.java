@@ -1,6 +1,7 @@
 package com.apiproject.ServiceBookingSystem.controller;
 import com.apiproject.ServiceBookingSystem.dto.AdDTO;
 import com.apiproject.ServiceBookingSystem.dto.ReservationDTO;
+import com.apiproject.ServiceBookingSystem.entity.Ad;
 import com.apiproject.ServiceBookingSystem.enums.ApiErrorCode;
 import com.apiproject.ServiceBookingSystem.services.company.CompanyService;
 import com.apiproject.ServiceBookingSystem.util.ResponseUtil;
@@ -23,14 +24,14 @@ public class CompanyController {
     private CompanyService companyService;
     @PostMapping("/ad/{userId}")
     public ResponseEntity<?> postAd(@PathVariable Long userId, @ModelAttribute AdDTO adDTO) throws IOException {
-        boolean success = companyService.postAd(userId, adDTO);
-        if (success) {
-            return ResponseEntity.status(HttpStatus.OK).build();
-
-        } else {
+        try {
+            Ad createdAd = companyService.postAd(userId, adDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdAd);
+        } catch (IllegalArgumentException e) {
             return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_POST_FAILED.getCode(),
-                    ApiErrorCode.AD_POST_FAILED.getMessage(), HttpStatus.CONFLICT);
-
+                    ApiErrorCode.AD_POST_FAILED.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while creating the ad.");
         }
     }
     @GetMapping("/ads/{userId}")
@@ -49,7 +50,7 @@ public class CompanyController {
         }
         else {
             return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_NOT_FOUND.getCode(),
-                    ApiErrorCode.AD_NOT_FOUND.getMessage(), HttpStatus.CONFLICT);
+                    ApiErrorCode.AD_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND);
 
         }
     }
@@ -61,8 +62,9 @@ public class CompanyController {
             return ResponseEntity.status(HttpStatus.OK).build();
         } else {
             return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_UPDATE_FAILED.getCode(),
-                    ApiErrorCode.AD_UPDATE_FAILED.getMessage(), HttpStatus.CONFLICT);        }
+                    ApiErrorCode.AD_UPDATE_FAILED.getMessage(), HttpStatus.NOT_FOUND);        }
     }
+
     @DeleteMapping("/ad/{adId}")
     public ResponseEntity<?> deletedAd(@PathVariable Long adId){
         boolean success=companyService.deleteAd(adId);
@@ -71,7 +73,7 @@ public class CompanyController {
         }
         else{
             return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_DELETE_FAILED.getCode(),
-                    ApiErrorCode.AD_DELETE_FAILED.getMessage(), HttpStatus.CONFLICT);        }
+                    ApiErrorCode.AD_DELETE_FAILED.getMessage(), HttpStatus.NOT_FOUND);        }
     }
 
     @GetMapping("/bookings/{companyId}")

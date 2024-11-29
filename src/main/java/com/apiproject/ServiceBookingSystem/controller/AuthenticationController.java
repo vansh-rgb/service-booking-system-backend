@@ -59,7 +59,7 @@ public class AuthenticationController {
 
         UserDto createdUser = authService.signupClient(signupRequestDTO);
         return ResponseUtil.buildErrorResponse(ApiErrorCode.SUCCESSFUL_CLIENT_SIGNUP.getCode(),
-                ApiErrorCode.CLIENT_EXISTS.getMessage(), HttpStatus.CONFLICT);
+                ApiErrorCode.SUCCESSFUL_CLIENT_SIGNUP.getMessage(), HttpStatus.OK);
     }
 
     @PostMapping("/company/sign-up")
@@ -78,13 +78,14 @@ public class AuthenticationController {
     public void createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) throws IOException, JSONException {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+            success(authenticationRequest,response);
+
         } catch (BadCredentialsException e) {
             log.error("###################################");
             failure(authenticationRequest,response);
 //            throw new BadCredentialsException("Invalid username or password", e);
 
         }
-        success(authenticationRequest,response);
 //
 
 
@@ -112,18 +113,12 @@ public class AuthenticationController {
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + jwt);
     }
 
-    public void failure(AuthenticationRequest authenticationRequest, HttpServletResponse response) throws JSONException, IOException {
-
+    private void failure(AuthenticationRequest authenticationRequest, HttpServletResponse response) throws IOException, JSONException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
+        response.setContentType("application/json");
         response.getWriter().write(new JSONObject()
-                .put("code", ApiErrorCode.INVALID_CREDENTIALS.getCode())
-                .put("message", ApiErrorCode.INVALID_CREDENTIALS.getMessage())
-                .toString()
-        );
-
-
-        response.addHeader("Access-Control-Expose-Headers", "Authorization");
-        response.addHeader("Access-Control-Allow-Headers", "Authorization," +
-                " X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept, X-Custom-Header");
-
+                .put("code", 3104) // Custom error code
+                .put("message", "Invalid username or password.")
+                .toString());
     }
 }
