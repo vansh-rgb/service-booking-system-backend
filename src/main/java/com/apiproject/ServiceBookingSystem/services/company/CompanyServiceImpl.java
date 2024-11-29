@@ -72,9 +72,9 @@ public class CompanyServiceImpl implements CompanyService{
 
     public boolean updateAd(long adId, AdDTO adDTO) throws IOException {
         Optional<Ad> optionalAd = adRepository.findById(adId);
-        if(optionalAd.isPresent() && adDTO.getImg() != null && !adDTO.getImg().isEmpty() &&
-                adDTO.getPrice() != null && adDTO.getPrice() > 0 &&
-                adDTO.getDescription() != null && !adDTO.getDescription().trim().isEmpty())
+        if(optionalAd.isPresent()
+        && adDTO.getImg() != null && !adDTO.getImg().isEmpty()
+        )
         {
             Ad ad =optionalAd.get();
             ad.setServiceName(adDTO.getServiceName());
