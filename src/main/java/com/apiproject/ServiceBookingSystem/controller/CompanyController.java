@@ -6,6 +6,7 @@ import com.apiproject.ServiceBookingSystem.enums.ApiErrorCode;
 import com.apiproject.ServiceBookingSystem.services.company.CompanyService;
 import com.apiproject.ServiceBookingSystem.util.ResponseUtil;
 import jakarta.servlet.http.HttpServletResponse;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -83,10 +84,18 @@ public class CompanyController {
     }
 
     @GetMapping("/booking/{bookingId}/{status}")
-    public  ResponseEntity<?> changeBookingStatus(@PathVariable long bookingId,@PathVariable String status)
-    {
+    public  ResponseEntity<?> changeBookingStatus(@PathVariable long bookingId,@PathVariable String status,HttpServletResponse response) throws JSONException, IOException {
         boolean success= companyService.changeBookingStatus(bookingId,status);
-        if(success) return ResponseEntity.ok().build();
-        return  ResponseEntity.notFound().build();
+        if(success)
+        {
+            response.getWriter().write(new JSONObject()
+                    .put("message", "\t\n" +
+                            "Booking status updated successfully.")
+                    .toString());
+            return ResponseEntity.ok().build();
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

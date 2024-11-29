@@ -21,7 +21,7 @@ public enum ApiErrorCode {
     AD_NOT_FOUND(3104, "Ad not found"),
     AD_UPDATE_FAILED(3105, "Failed to update ad"),
     AD_DELETE_FAILED(3106, "Failed to delete ad"),
-    BOOKING_UPDATE_FAILED(3107, "Failed to update booking status");
+    BOOKING_UPDATE_SUCCESS(3107, "Booking status updated successfully");
 
     private final int code;
     private final String message;

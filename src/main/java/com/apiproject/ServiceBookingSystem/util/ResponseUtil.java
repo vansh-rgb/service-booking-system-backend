@@ -15,4 +15,5 @@ public class ResponseUtil {
         ApiResponse<Object> apiResponse = new ApiResponse<>(code, message, null);
         return new ResponseEntity<>(apiResponse, status);
     }
+
 }
