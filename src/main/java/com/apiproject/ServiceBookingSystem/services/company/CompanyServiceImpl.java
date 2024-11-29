@@ -1,7 +1,6 @@
 package com.apiproject.ServiceBookingSystem.services.company;
 
 import com.apiproject.ServiceBookingSystem.dto.AdDTO;
-import com.apiproject.ServiceBookingSystem.dto.AdDetailsForClientDTO;
 import com.apiproject.ServiceBookingSystem.dto.ReservationDTO;
 import com.apiproject.ServiceBookingSystem.entity.Ad;
 import com.apiproject.ServiceBookingSystem.entity.Reservation;
@@ -31,7 +30,7 @@ public class CompanyServiceImpl implements CompanyService{
     private ReservationRepository reservationRepository;
 
 
-    public boolean postAd(Long userId, AdDTO adDTO) throws IOException {
+    public Ad postAd(Long userId, AdDTO adDTO) throws IOException {
 
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent() &&
@@ -47,10 +46,9 @@ public class CompanyServiceImpl implements CompanyService{
             ad.setPrice(adDTO.getPrice());
             ad.setUser(optionalUser.get());
 
-            adRepository.save(ad);
-            return true;
+            return adRepository.save(ad);
         }
-        return false;
+        throw new IllegalArgumentException("Invalid ad data or user not found.");
     }
 
     public List<AdDTO> getAllAds(long userId) {
