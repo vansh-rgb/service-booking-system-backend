@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/company")
+@RequestMapping("/api/v1/company")
 public class CompanyController {
     @Autowired
     private CompanyService companyService;

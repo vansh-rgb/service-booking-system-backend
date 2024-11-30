@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/client")
+@RequestMapping("/api/v1/client")
 public class ClientController {
 
     @Autowired
