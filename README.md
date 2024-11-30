@@ -114,4 +114,5 @@ Users can store identity documents (passport, ID card, etc.) in a blockchain-bas
 Institutions can verify the authenticity of identities without accessing the full data.
 Example:
 Similar to Civic or Microsoft's Decentralized ID.
+![image](https://github.com/user-attachments/assets/a4897e01-601e-4146-a897-476b72e265ed)
 
