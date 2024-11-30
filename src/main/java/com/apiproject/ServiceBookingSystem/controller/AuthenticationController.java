@@ -86,9 +86,6 @@ public class AuthenticationController {
 //            throw new BadCredentialsException("Invalid username or password", e);
 
         }
-//
-
-
     }
 
     private void success(AuthenticationRequest authenticationRequest, HttpServletResponse response) throws IOException, JSONException {
