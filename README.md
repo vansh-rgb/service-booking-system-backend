@@ -105,3 +105,13 @@ The platform serves as a marketplace where service companies can advertise their
 | 500 | INTERNAL_SERVER_ERROR | Internal server error | Unexpected server error occurred |
 | 404 | NOT_FOUND | Resource not found | The requested resource was not found |
 | 403 | FORBIDDEN | Access denied | User doesn't have permission to access the resource |
+
+
+1. Digital Identity Management Application
+Use Case: A platform for storing and verifying digital identities securely.
+Application Idea:
+Users can store identity documents (passport, ID card, etc.) in a blockchain-based app.
+Institutions can verify the authenticity of identities without accessing the full data.
+Example:
+Similar to Civic or Microsoft's Decentralized ID.
+
