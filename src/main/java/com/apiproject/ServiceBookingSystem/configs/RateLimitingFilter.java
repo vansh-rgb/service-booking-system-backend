@@ -34,7 +34,7 @@ public class RateLimitingFilter implements Filter {
 
         // Check if the request limit has been exceeded
         if (requests > MAX_REQUESTS_PER_MINUTE) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            httpServletResponse.setStatus(429);
             httpServletResponse.getWriter().write("Too many requests. Please try again later.");
             return;
         }

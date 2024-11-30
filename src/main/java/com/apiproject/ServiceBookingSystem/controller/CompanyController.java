@@ -23,8 +23,14 @@ import java.util.Map;
 public class CompanyController {
     @Autowired
     private CompanyService companyService;
+    //change here
     @PostMapping("/ad/{userId}")
     public ResponseEntity<?> postAd(@PathVariable Long userId, @ModelAttribute AdDTO adDTO) throws IOException {
+        if (!userId.equals(adDTO.getUserId())) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                    .body("Mismatch between userId in path and payload. Path userId: " + userId +
+                            ", Payload userId: " + adDTO.getUserId());
+        }
         try {
             Ad createdAd = companyService.postAd(userId, adDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdAd);
@@ -38,6 +44,13 @@ public class CompanyController {
     @GetMapping("/ads/{userId}")
     public ResponseEntity<?> getAllAdsByUserId(@PathVariable long userId)
     {
+        List<AdDTO> ads = companyService.getAllAds(userId);
+
+        if (ads.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No ads found for the user with ID: " + userId);
+        }
+
         return ResponseEntity.ok(companyService.getAllAds(userId));
     }
 
@@ -51,7 +64,7 @@ public class CompanyController {
         }
         else {
             return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_NOT_FOUND.getCode(),
-                    ApiErrorCode.AD_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND);
+                    ApiErrorCode.AD_NOT_FOUND.getMessage(),HttpStatus.NOT_FOUND);
 
         }
     }
@@ -60,7 +73,8 @@ public class CompanyController {
     public ResponseEntity<?> updateAd(@PathVariable Long addId,  @ModelAttribute AdDTO adDTO) throws IOException {
         boolean success = companyService.updateAd(addId, adDTO);
         if (success) {
-            return ResponseEntity.status(HttpStatus.OK).build();
+            AdDTO updatedAd = companyService.getAdById(addId); // Fetch updated ad if necessary
+            return ResponseEntity.status(HttpStatus.OK).body(updatedAd);
         } else {
             return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_UPDATE_FAILED.getCode(),
                     ApiErrorCode.AD_UPDATE_FAILED.getMessage(), HttpStatus.NOT_FOUND);        }
@@ -70,17 +84,32 @@ public class CompanyController {
     public ResponseEntity<?> deletedAd(@PathVariable Long adId){
         boolean success=companyService.deleteAd(adId);
         if(success){
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.status(HttpStatus.OK).body("Advertisement deleted successfully.");
+
         }
         else{
             return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_DELETE_FAILED.getCode(),
-                    ApiErrorCode.AD_DELETE_FAILED.getMessage(), HttpStatus.NOT_FOUND);        }
+                    ApiErrorCode.AD_DELETE_FAILED.getMessage(), HttpStatus.BAD_REQUEST);        }
     }
 
     @GetMapping("/bookings/{companyId}")
-    public  ResponseEntity<List<ReservationDTO>> getAllAdBookings(@PathVariable long companyId)
+    public  ResponseEntity<?> getAllAdBookings(@PathVariable long companyId)
     {
-        return  ResponseEntity.ok(companyService.getAllAdBookings((companyId)));
+        try {
+            List<ReservationDTO> bookings = companyService.getAllAdBookings(companyId);
+
+            // If no bookings are found, return a not found error
+            if (bookings.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No bookings found for the company with ID: " + companyId);
+            }
+
+            // Return list of bookings if found
+            return ResponseEntity.ok(bookings);
+        } catch (Exception e) {
+            // Generic exception handler for other unforeseen errors
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while retrieving the bookings.");
+        }
     }
 
     @GetMapping("/booking/{bookingId}/{status}")
@@ -95,7 +124,7 @@ public class CompanyController {
             return ResponseEntity.ok().build();
         }
         else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No bookings found for this Booking Id: " + bookingId);
         }
     }
 }
