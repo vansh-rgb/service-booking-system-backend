@@ -117,7 +117,7 @@ public class AuthenticationController {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
         response.setContentType("application/json");
         response.getWriter().write(new JSONObject()
-                .put("code", 3104) // Custom error code
+                .put("code", 3102) // Custom error code
                 .put("message", "Invalid username or password.")
                 .toString());
     }

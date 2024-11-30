@@ -3,10 +3,12 @@ package com.apiproject.ServiceBookingSystem.controller;
 import com.apiproject.ServiceBookingSystem.dto.AdDTO;
 import com.apiproject.ServiceBookingSystem.dto.ReservationDTO;
 import com.apiproject.ServiceBookingSystem.dto.ReviewDTO;
+import com.apiproject.ServiceBookingSystem.enums.ApiErrorCode;
 import com.apiproject.ServiceBookingSystem.exceptions.BadRequestException;
 import com.apiproject.ServiceBookingSystem.exceptions.ConflictException;
 import com.apiproject.ServiceBookingSystem.exceptions.ResourceNotFoundException;
 import com.apiproject.ServiceBookingSystem.services.client.ClientService;
+import com.apiproject.ServiceBookingSystem.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -48,20 +50,39 @@ public class ClientController {
         return ResponseEntity.ok(ads);
     }
 
+
     @PostMapping("/book-service")
     public ResponseEntity<?> bookService(@RequestBody ReservationDTO reservationDTO) {
         try {
-            boolean success = clientService.bookService(reservationDTO);
-            if (!success) {
-                throw new ConflictException("Booking conflict occurred. Please try again.");
-            }
-            return ResponseEntity.status(HttpStatus.OK).body("Booking successful.");
+            // Call the service layer method
+            String result = clientService.bookService(reservationDTO);
 
-            //return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (BadRequestException e) {
-            throw new BadRequestException("Invalid booking details provided.");
+            // Handle success and specific error messages
+            switch (result) {
+                case "OK":
+                    return ResponseUtil.buildErrorResponse(ApiErrorCode.CLIENT_BOOKING_FAILED.getCode(),
+                            ApiErrorCode.CLIENT_BOOKING_FAILED.getMessage(), HttpStatus.OK);
+//                return ResponseEntity.status(HttpStatus.OK).body("Booking successful.");
+                case "Ad not Present":
+                    return ResponseUtil.buildErrorResponse(ApiErrorCode.AD_NOT_FOUND.getCode(),
+                        ApiErrorCode.AD_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND);
+                case "User not Present":
+                    return ResponseUtil.buildErrorResponse(ApiErrorCode.CLIENT_DOES_NOT_EXIST.getCode(),
+                        ApiErrorCode.CLIENT_DOES_NOT_EXIST.getMessage(), HttpStatus.NOT_FOUND);
+                case "Conflict: Booking already exists for the given ad and date.":
+                    return ResponseUtil.buildErrorResponse(ApiErrorCode.BOOKING_EXIST.getCode(),
+                        ApiErrorCode.BOOKING_EXIST.getMessage(), HttpStatus.CONFLICT);
+                default:
+                    return ResponseUtil.buildErrorResponse(ApiErrorCode.INTERNAL_SERVER_ERROR.getCode(),
+                        ApiErrorCode.INTERNAL_SERVER_ERROR.getMessage(), HttpStatus.OK);
+                    // Catch any unexpected messages
+            }
+        } catch (Exception e) {
+            // General exception handling (optional for unexpected scenarios)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
         }
     }
+
 
     @GetMapping("/ad/{adId}")
     public ResponseEntity<?> getAdDetailsByAdId(@PathVariable Long adId) {
