@@ -49,7 +49,7 @@ A Spring Boot-based service booking platform that enables service providers to a
 The platform serves as a marketplace where service companies can advertise their services, and clients can easily discover, book, and review these services. It's designed to handle the complete service booking lifecycle from listing to review submission.
 
 ## API Documentation
-- SwaggerHub Documentation: [https://app.swaggerhub.com/apis/BARSHAPAL-5db/ServiceBookingSystemManagement/1.0.0]
+- SwaggerHub Documentation: [https://app.swaggerhub.com/apis-docs/BARSHAPAL-5db/ServiceBookingSystemManagement/1.0.0]
 - Postman Collection: [https://www.postman.com/your-collection-link]
 
 ## Pagination Strategy
