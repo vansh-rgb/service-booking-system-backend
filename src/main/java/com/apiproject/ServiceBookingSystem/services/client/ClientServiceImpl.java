@@ -52,11 +52,19 @@ public class ClientServiceImpl implements ClientService {
         return adPage.map(Ad::getAdDTO);
     }
 
-    public boolean bookService(ReservationDTO reservationDTO) {
+    public String bookService(ReservationDTO reservationDTO) {
         Optional<Ad> optionalAd = adRepository.findById(reservationDTO.getAdId());
         Optional<User> optionalUser = userRepository.findById(reservationDTO.getUserId());
 
         if (optionalAd.isPresent() && optionalUser.isPresent()) {
+            boolean bookingExists = reservationRepository.existsByAd_IdAndBookDate(
+                    reservationDTO.getAdId(),
+                    reservationDTO.getBookDate()
+            );
+
+            if (bookingExists) {
+                return "Conflict: Booking already exists for the given ad and date.";
+            }
             Reservation reservation = new Reservation();
 
             reservation.setBookDate(reservationDTO.getBookDate());
@@ -68,9 +76,13 @@ public class ClientServiceImpl implements ClientService {
             reservation.setReviewStatus(ReviewStatus.FALSE);
 
             reservationRepository.save(reservation);
-            return true;
+            return "OK";
         }
-        return false;
+        if(!optionalAd.isPresent()){
+        return "Ad not Present";}
+        else {
+            return "User not Present";
+        }
     }
 
     public AdDetailsForClientDTO getAdDetailsByAdId(Long adId) {

@@ -13,7 +13,7 @@ public interface ClientService {
     Page<AdDTO> getAllAds(Pageable pageable);
     Page<AdDTO> searchAdByName(String name, Pageable pageable);
 
-    boolean bookService(ReservationDTO reservationDTO);
+    String bookService(ReservationDTO reservationDTO);
 
     AdDetailsForClientDTO getAdDetailsByAdId(Long adId);
     List<ReservationDTO> getAllBookingsByUserId(long userId);

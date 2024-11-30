@@ -15,13 +15,16 @@ public enum ApiErrorCode {
     // Common Error Codes
     COMPANY_EXISTS(3101, "Company already exists with this Email!"),
     CLIENT_EXISTS(3102, "Client already exists with this Email!"),
+    CLIENT_BOOKING_FAILED(3108,"Booking successful."),
+    CLIENT_DOES_NOT_EXIST(3109,"User not found."),
+    BOOKING_EXIST(3110,"Booking conflict: The ad is already booked for this date."),
 
     INVALID_CREDENTIALS(3102, "Invalid username or password"),
     AD_POST_FAILED(3103, "Failed to post ad"),
     AD_NOT_FOUND(3104, "Ad not found"),
     AD_UPDATE_FAILED(3105, "Failed to update ad"),
     AD_DELETE_FAILED(3106, "Failed to delete ad"),
-    BOOKING_UPDATE_FAILED(3107, "Failed to update booking status");
+    BOOKING_UPDATE_SUCCESS(3107, "Booking status updated successfully");
 
     private final int code;
     private final String message;
