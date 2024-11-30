@@ -120,5 +120,7 @@ Similar to Civic or Microsoft's Decentralized ID.
 
 
 
+## Logical WorkFlow
+
 ![image](https://github.com/user-attachments/assets/a4897e01-601e-4146-a897-476b72e265ed)
 
