@@ -35,8 +35,7 @@ public class CompanyServiceImpl implements CompanyService{
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent() &&
                 adDTO.getImg() != null && !adDTO.getImg().isEmpty() &&
-                adDTO.getPrice() != null && adDTO.getPrice() > 0 &&
-                adDTO.getDescription() != null && !adDTO.getDescription().trim().isEmpty())
+                adDTO.getPrice() != null && adDTO.getPrice() > 0)
 
         {
             Ad ad = new Ad();
@@ -48,6 +47,12 @@ public class CompanyServiceImpl implements CompanyService{
 
             return adRepository.save(ad);
         }
+        if(adDTO.getPrice()<0)
+        {
+            throw new IllegalArgumentException("Price should not be less than 0.");
+
+        }
+
         throw new IllegalArgumentException("Invalid ad data or user not found.");
     }
 
@@ -72,9 +77,7 @@ public class CompanyServiceImpl implements CompanyService{
         Optional<Ad> optionalAd = adRepository.findById(adId);
         if(optionalAd.isPresent()
                 && adDTO.getImg() != null && !adDTO.getImg().isEmpty()&&
-                adDTO.getPrice() != null && adDTO.getPrice() > 0 &&
-                adDTO.getDescription() != null && !adDTO.getDescription().trim().isEmpty()
-        )
+                adDTO.getPrice() != null && adDTO.getPrice() > 0)
         {
             Ad ad =optionalAd.get();
             ad.setServiceName(adDTO.getServiceName());

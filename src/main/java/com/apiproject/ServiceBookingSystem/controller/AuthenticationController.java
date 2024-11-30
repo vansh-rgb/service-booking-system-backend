@@ -48,29 +48,95 @@ public class AuthenticationController {
 
     public static final String HEADER_STRING = "Authorization";
 
-    @PostMapping("/client/sign-up")
-    public ResponseEntity<?> signupClient(@RequestBody SignupRequestDTO signupRequestDTO) {
-        if(authService.presentByEmail(signupRequestDTO.getEmail())) {
-            return ResponseUtil.buildErrorResponse(ApiErrorCode.CLIENT_EXISTS.getCode(),
-                    ApiErrorCode.CLIENT_EXISTS.getMessage(), HttpStatus.CONFLICT);
-        }
-
-        UserDto createdUser = authService.signupClient(signupRequestDTO);
-        return ResponseUtil.buildErrorResponse(ApiErrorCode.SUCCESSFUL_CLIENT_SIGNUP.getCode(),
-                ApiErrorCode.SUCCESSFUL_CLIENT_SIGNUP.getMessage(), HttpStatus.OK);
+//    @PostMapping("/client/sign-up")
+//    public ResponseEntity<?> signupClient(@RequestBody SignupRequestDTO signupRequestDTO) {
+//        if(authService.presentByEmail(signupRequestDTO.getEmail())) {
+//            return ResponseUtil.buildErrorResponse(ApiErrorCode.CLIENT_EXISTS.getCode(),
+//                    ApiErrorCode.CLIENT_EXISTS.getMessage(), HttpStatus.CONFLICT);
+//        }
+//
+//        UserDto createdUser = authService.signupClient(signupRequestDTO);
+//        return ResponseUtil.buildErrorResponse(ApiErrorCode.SUCCESSFUL_CLIENT_SIGNUP.getCode(),
+//                ApiErrorCode.SUCCESSFUL_CLIENT_SIGNUP.getMessage(), HttpStatus.OK);
+//    }
+@PostMapping("/client/sign-up")
+public ResponseEntity<?> signupClient(@RequestBody SignupRequestDTO signupRequestDTO) {
+    // Validate that email and password are provided
+    if (signupRequestDTO.getEmail() == null || signupRequestDTO.getEmail().isEmpty()) {
+        return ResponseUtil.buildErrorResponse(
+                1005,
+                "Email is required.",
+                HttpStatus.BAD_REQUEST);
+    }
+    if (signupRequestDTO.getPassword() == null || signupRequestDTO.getPassword().isEmpty()) {
+        return ResponseUtil.buildErrorResponse(
+                1006,
+                "Password is required.",
+                HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/company/sign-up")
-    public ResponseEntity<?> signupCompany(@RequestBody SignupRequestDTO signupRequestDTO) {
-        if(authService.presentByEmail(signupRequestDTO.getEmail())) {
-            return ResponseUtil.buildErrorResponse(ApiErrorCode.COMPANY_EXISTS.getCode(),
-                    ApiErrorCode.COMPANY_EXISTS.getMessage(), HttpStatus.CONFLICT);        }
-
-        UserDto createdUser = authService.signupCompany(signupRequestDTO);
-
-        return ResponseUtil.buildResponse(ApiErrorCode.SUCCESSFUL_COMPANY_SIGNUP.getCode(),
-                ApiErrorCode.SUCCESSFUL_COMPANY_SIGNUP.getMessage(), createdUser);
+    // Check if the client already exists
+    if (authService.presentByEmail(signupRequestDTO.getEmail())) {
+        return ResponseUtil.buildErrorResponse(
+                ApiErrorCode.CLIENT_EXISTS.getCode(),
+                ApiErrorCode.CLIENT_EXISTS.getMessage(),
+                HttpStatus.CONFLICT);
     }
+
+    // Proceed with signup
+    UserDto createdUser = authService.signupClient(signupRequestDTO);
+
+    // Return a successful response with the created user
+    return ResponseUtil.buildSuccessResponse(
+            ApiErrorCode.SUCCESSFUL_CLIENT_SIGNUP.getCode(),
+            ApiErrorCode.SUCCESSFUL_CLIENT_SIGNUP.getMessage(),
+            createdUser,
+            HttpStatus.CREATED);  // Use CREATED (201) for successful resource creation
+}
+//    @PostMapping("/company/sign-up")
+//    public ResponseEntity<?> signupCompany(@RequestBody SignupRequestDTO signupRequestDTO) {
+//        if(authService.presentByEmail(signupRequestDTO.getEmail())) {
+//            return ResponseUtil.buildErrorResponse(ApiErrorCode.COMPANY_EXISTS.getCode(),
+//                    ApiErrorCode.COMPANY_EXISTS.getMessage(), HttpStatus.CONFLICT);        }
+//
+//        UserDto createdUser = authService.signupCompany(signupRequestDTO);
+//
+//        return ResponseUtil.buildResponse(ApiErrorCode.SUCCESSFUL_COMPANY_SIGNUP.getCode(),
+//                ApiErrorCode.SUCCESSFUL_COMPANY_SIGNUP.getMessage(), createdUser);
+//    }
+@PostMapping("/company/sign-up")
+public ResponseEntity<?> signupCompany(@RequestBody SignupRequestDTO signupRequestDTO) {
+    // Validate that email and password are provided
+    if (signupRequestDTO.getEmail() == null || signupRequestDTO.getEmail().isEmpty()) {
+        return ResponseUtil.buildErrorResponse(
+                1005,
+                "Email is required.",
+                HttpStatus.BAD_REQUEST);
+    }
+    if (signupRequestDTO.getPassword() == null || signupRequestDTO.getPassword().isEmpty()) {
+        return ResponseUtil.buildErrorResponse(
+                1006,
+                "Password is required.",
+                HttpStatus.BAD_REQUEST);
+    }
+
+    // Check if the company already exists
+    if (authService.presentByEmail(signupRequestDTO.getEmail())) {
+        return ResponseUtil.buildErrorResponse(
+                ApiErrorCode.COMPANY_EXISTS.getCode(),
+                ApiErrorCode.COMPANY_EXISTS.getMessage(),
+                HttpStatus.CONFLICT);
+    }
+
+    // Proceed with signup
+    UserDto createdUser = authService.signupCompany(signupRequestDTO);
+
+    // Return a successful response with the created user
+    return ResponseUtil.buildResponse(
+            ApiErrorCode.SUCCESSFUL_COMPANY_SIGNUP.getCode(),
+            ApiErrorCode.SUCCESSFUL_COMPANY_SIGNUP.getMessage(),
+            createdUser);
+}
 
     @PostMapping("/authenticate")
     public void createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) throws IOException, JSONException {
