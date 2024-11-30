@@ -1,4 +1,4 @@
-# Spring Boot Service Management System
+# Service Management System
 
 ## Team Details
 | Name | BITS ID | Batch |
@@ -12,6 +12,11 @@
 ## Project Description
 ### Overview
 A Spring Boot-based service booking platform that enables service providers to advertise their services and allows clients to discover, book, and review these services. The platform facilitates seamless interactions between service companies and clients through a RESTful API architecture.
+
+
+## Logical WorkFlow
+
+![image](https://github.com/user-attachments/assets/a4897e01-601e-4146-a897-476b72e265ed)
 
 ### Key Features
 
@@ -109,18 +114,28 @@ https://sap-my.sharepoint.com/:w:/r/personal/shivani_pandey03_sap_com/_layouts/1
 | 404 | NOT_FOUND | Resource not found | The requested resource was not found |
 | 403 | FORBIDDEN | Access denied | User doesn't have permission to access the resource |
 
-
-1. Digital Identity Management Application
-Use Case: A platform for storing and verifying digital identities securely.
-Application Idea:
-Users can store identity documents (passport, ID card, etc.) in a blockchain-based app.
-Institutions can verify the authenticity of identities without accessing the full data.
-Example:
-Similar to Civic or Microsoft's Decentralized ID.
-
-
-
-## Logical WorkFlow
-
-![image](https://github.com/user-attachments/assets/a4897e01-601e-4146-a897-476b72e265ed)
-
+## Custom Error Codes and Messages
+| Code | Message                                                   | Description                                          |
+|------|-----------------------------------------------------------|------------------------------------------------------|
+| 1004 | No ads found for service name!                            | No advertisements found for the specified service    |
+| 2100 | Client signed up successfully!                            | Successful client registration                       |
+| 2101 | Company signed up successfully!                           | Successful company registration                      |
+| 2200 | Logged in successfully!                                   | Successful user login                                |
+| 2102 | Authentication successful!                                | User authentication succeeded                        |
+| 2103 | Ad posted successfully!                                   | New advertisement was posted                         |
+| 2104 | Ad updated successfully!                                  | Existing advertisement was updated                   |
+| 2105 | Ad deleted successfully!                                  | Advertisement was removed                            |
+| 2106 | Booking status updated successfully!                      | Booking status change succeeded                      |
+| 3101 | Company already exists with this Email!                   | Attempt to register a company with an existing email |
+| 3102 | Client already exists with this Email!                    | Attempt to register a client with an existing email  |
+| 3102 | Invalid username or password                              | Login attempt with incorrect credentials             |
+| 3103 | Failed to post ad                                         | Unable to create new advertisement                   |
+| 3104 | Ad not found                                              | Requested advertisement does not exist               |
+| 3105 | Failed to update ad                                       | Unable to modify existing advertisement              |
+| 3106 | Failed to delete ad                                       | Unable to remove advertisement                       |
+| 3107 | Booking status updated successfully                       | Booking status change succeeded                      |
+| 3108 | Booking successful.                                       | Client booking was completed successfully            |
+| 3109 | User not found.                                           | Requested client does not exist                      |
+| 3110 | Booking conflict: The ad is already booked for this date. | Attempt to book an ad on an unavailable date         |
+| 4000 | User not found                                            | Requested user does not exist                        |
+| 5000 | Internal server error                                     | Unexpected server-side error occurred                |
