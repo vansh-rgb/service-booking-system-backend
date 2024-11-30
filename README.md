@@ -52,6 +52,9 @@ The platform serves as a marketplace where service companies can advertise their
 - SwaggerHub Documentation: [https://app.swaggerhub.com/apis-docs/BARSHAPAL-5db/ServiceBookingSystemManagement/1.0.0]
 - Postman Collection: [https://www.postman.com/your-collection-link]
 
+## Detailed Overview
+https://sap-my.sharepoint.com/:w:/r/personal/shivani_pandey03_sap_com/_layouts/15/Doc.aspx?sourcedoc=%7B420F0F30-6217-4425-BF8E-22AD21C727A0%7D&file=WebServiceBooking.docx&wdLOR=cB2AD752B-AB19-7B46-906A-0A292380CF97&fromShare=true&action=default&mobileredirect=true
+
 ## Pagination Strategy
 
 ### Core Elements
@@ -105,3 +108,19 @@ The platform serves as a marketplace where service companies can advertise their
 | 500 | INTERNAL_SERVER_ERROR | Internal server error | Unexpected server error occurred |
 | 404 | NOT_FOUND | Resource not found | The requested resource was not found |
 | 403 | FORBIDDEN | Access denied | User doesn't have permission to access the resource |
+
+
+1. Digital Identity Management Application
+Use Case: A platform for storing and verifying digital identities securely.
+Application Idea:
+Users can store identity documents (passport, ID card, etc.) in a blockchain-based app.
+Institutions can verify the authenticity of identities without accessing the full data.
+Example:
+Similar to Civic or Microsoft's Decentralized ID.
+
+
+
+## Logical WorkFlow
+
+![image](https://github.com/user-attachments/assets/a4897e01-601e-4146-a897-476b72e265ed)
+
