@@ -118,6 +118,11 @@ public class CompanyServiceImpl implements CompanyService{
             {
                 existingReservation.setReservationStatus(ReservationStatus.APPROVED);
             }
+            else if(Objects.equals(status,"Cancel"))
+            {
+                existingReservation.setReservationStatus(ReservationStatus.REJECTED);
+            }
+
             else {
                 existingReservation.setReservationStatus(ReservationStatus.REJECTED);
             }
