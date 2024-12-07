@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/client")
+@RequestMapping("/api/v1/")
 public class ClientController {
 
     @Autowired
     private ClientService clientService;
 
-    @GetMapping("/ads")
+    @GetMapping("client/ads")
     public ResponseEntity<Page<AdDTO>> getAllAds(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         try {
@@ -39,7 +39,7 @@ public class ClientController {
     }
 
 
-    @GetMapping("/search/{name}")
+    @GetMapping("ads/search/{name}")
     public ResponseEntity<Page<AdDTO>> searchAdByService(
             @PathVariable String name,
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
@@ -51,7 +51,7 @@ public class ClientController {
     }
 
 
-    @PostMapping("/book-service")
+    @PostMapping("client/book-service")
     public ResponseEntity<?> bookService(@RequestBody ReservationDTO reservationDTO) {
         try {
             // Call the service layer method
@@ -84,7 +84,7 @@ public class ClientController {
     }
 
 
-    @GetMapping("/ad/{adId}")
+    @GetMapping("client/ad/{adId}")
     public ResponseEntity<?> getAdDetailsByAdId(@PathVariable Long adId) {
         try {
         var adDetails = clientService.getAdDetailsByAdId(adId);
@@ -98,7 +98,7 @@ public class ClientController {
     }
     }
 
-    @GetMapping("/my-bookings/{userId}")
+    @GetMapping("client/my-bookings/{userId}")
     public ResponseEntity<?> getAllBookingsByUserId(@PathVariable long userId) {
         var bookings = clientService.getAllBookingsByUserId(userId);
         if (bookings.isEmpty()) {
@@ -107,7 +107,7 @@ public class ClientController {
         return ResponseEntity.ok(bookings);
     }
 
-    @PostMapping("/review")
+    @PostMapping("client/review")
     public ResponseEntity<?> giveReview(@RequestBody ReviewDTO reviewDTO) {
         log.info("Review submission request by userId: " + reviewDTO.getUserId());
         boolean success = clientService.giveReview(reviewDTO);
