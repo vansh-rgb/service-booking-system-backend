@@ -55,7 +55,6 @@ The platform serves as a marketplace where service companies can advertise their
 
 ## API Documentation
 - SwaggerHub Documentation: [https://app.swaggerhub.com/apis-docs/BARSHAPAL-5db/ServiceBookingSystemManagement/1.0.0]
-- Postman Collection: [https://www.postman.com/your-collection-link]
 
 ## Detailed Overview
 https://sap-my.sharepoint.com/:w:/r/personal/shivani_pandey03_sap_com/_layouts/15/Doc.aspx?sourcedoc=%7B420F0F30-6217-4425-BF8E-22AD21C727A0%7D&file=WebServiceBooking.docx&wdLOR=cB2AD752B-AB19-7B46-906A-0A292380CF97&fromShare=true&action=default&mobileredirect=true
